@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <title>ฝากความคิดถึง MFU Library</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+<body>
+  <h2>ฝากความคิดถึง MFU Library</h2>
+  <form id="memoryForm">
+    <textarea id="message" name="message" placeholder="ข้อความ" required></textarea>
+    <input type="text" id="name" name="name" placeholder="ชื่อของคุณ" />
+    <button type="submit">ส่งข้อความ</button>
+  </form>
+
+  <script>
+    const form = document.getElementById('memoryForm');
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const message = document.getElementById('message').value;
+      const name = document.getElementById('name').value || 'ไม่ระบุชื่อ';
+
+      fetch('https://script.google.com/macros/s/AKfycby_WYv4mX2TkaVPf0vnj7GRkos94kErOgmHbTZHlCR_tB3qJbHREuCf2sLTO5L8ZBmFgA/exec', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, message }),
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.result === 'success') {
+          alert('ส่งข้อความเรียบร้อยแล้ว');
+          form.reset();
+        } else {
+          alert('เกิดข้อผิดพลาด: ' + data.error);
+        }
+      })
+      .catch(err => {
+        alert('เกิดข้อผิดพลาด: ' + err.message);
+      });
+    });
+  </script>
+</body>
+</html>
