@@ -1,45 +1,122 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8" />
-  <title>ฝากความคิดถึง MFU Library</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <title>ฝากความคิดเห็นถึง MFU Library</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      font-family: Tahoma, sans-serif;
+      background: url('background.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #333;
+    }
+    header {
+      background-color: rgba(250, 250, 250, 1);
+      padding: 20px;
+      text-align: center;
+      color: white;
+    }
+    .container {
+      max-width: 800px;
+      margin: 30px auto;
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 30px;
+      border-radius: 10px;
+    }
+    h1, h2 {
+      text-align: center;
+      color: #a32025;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+    textarea, input[type="text"] {
+      margin: 10px 0;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      padding: 10px;
+      font-size: 16px;
+      background-color: #c90007;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .messages {
+      margin-top: 30px;
+    }
+    .message {
+      background-color: #f1f1f1;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+    }
+  </style>
 </head>
 <body>
-  <h2>ฝากความคิดถึง MFU Library</h2>
-  <form id="memoryForm">
-    <textarea id="message" name="message" placeholder="ข้อความ" required></textarea>
-    <input type="text" id="name" name="name" placeholder="ชื่อของคุณ" />
-    <button type="submit">ส่งข้อความ</button>
-  </form>
 
-  <script>
-    const form = document.getElementById('memoryForm');
-    form.addEventListener('submit', function(e) {
-      e.preventDefault();
-      const message = document.getElementById('message').value;
-      const name = document.getElementById('name').value || 'ไม่ระบุชื่อ';
+  <header>
+    <h1>ฝากความคิดถึง MFU Library</h1>
+  </header>
 
-      fetch('https://script.google.com/macros/s/AKfycby_WYv4mX2TkaVPf0vnj7GRkos94kErOgmHbTZHlCR_tB3qJbHREuCf2sLTO5L8ZBmFgA/exec', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ name, message }),
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.result === 'success') {
-          alert('ส่งข้อความเรียบร้อยแล้ว');
-          form.reset();
-        } else {
-          alert('เกิดข้อผิดพลาด: ' + data.error);
-        }
-      })
-      .catch(err => {
-        alert('เกิดข้อผิดพลาด: ' + err.message);
-      });
+  <div class="container">
+    <h2>เมื่อคิดถึง MFU Library คุณคิดถึงอะไรเป็นอย่างแรก?</h2>
+    <form id="memoryForm">
+      <label for="message">ฝากความคิดถึง*</label>
+      <textarea id="message" name="message" rows="4" maxlength="300" required></textarea>
+      <label for="name">จาก</label>
+      <input type="text" id="name" name="name" placeholder="ชื่อของคุณ">
+      <button type="submit">✍️ ส่งข้อความ</button>
+    </form>
+
+    <div class="messages" id="messages">
+      <h2>ความคิดถึงล่าสุด</h2>
+      <!-- ข้อความที่ฝากจะปรากฏที่นี่ -->
+    </div>
+  </div>
+
+<script>
+  const form = document.getElementById('memoryForm');
+  const messagesDiv = document.getElementById('messages');
+
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const message = document.getElementById('message').value;
+    const name = document.getElementById('name').value || 'ไม่ระบุชื่อ';
+
+    const scriptURL = 'https://script.google.com/macros/s/AKfycby_WYv4mX2TkaVPf0vnj7GRkos94kErOgmHbTZHlCR_tB3qJbHREuCf2sLTO5L8ZBmFgA/exec';
+
+    fetch(scriptURL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: message, name: name })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if(data.result === 'success'){
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('message');
+        messageDiv.innerHTML = `<strong>${name}:</strong> <p>${message}</p>`;
+        messagesDiv.appendChild(messageDiv);
+        form.reset();
+      } else {
+        alert('ส่งข้อมูลไม่สำเร็จ กรุณาลองใหม่');
+        console.error(data.error);
+      }
+    })
+    .catch(error => {
+      alert('เกิดข้อผิดพลาดในการส่งข้อมูล');
+      console.error('Error!', error.message);
     });
-  </script>
+  });
+</script>
+
 </body>
 </html>
