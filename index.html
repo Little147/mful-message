@@ -93,29 +93,32 @@
 
     const scriptURL = 'https://script.google.com/macros/s/AKfycbwbowQX1aOCweiHChSuwA_DufKAVsaNJV4jlMEpUXhlosSMP3VSKKNlYLr8asDm8P3q-g/exec';
 
-    fetch(scriptURL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: message, name: name })
-    })
+   form.addEventListener('submit', e => {
+  e.preventDefault();
+
+  const message = document.getElementById('message').value;
+  const name = document.getElementById('name').value || 'ไม่ระบุชื่อ';
+
+  fetch(scriptURL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message, name }),
+  })
     .then(response => response.json())
     .then(data => {
-      if(data.result === 'success'){
-        const messageDiv = document.createElement('div');
-        messageDiv.classList.add('message');
-        messageDiv.innerHTML = `<strong>${name}:</strong> <p>${message}</p>`;
-        messagesDiv.appendChild(messageDiv);
+      if (data.result === 'success') {
+        alert('ส่งข้อมูลสำเร็จ!');
         form.reset();
+        // เพิ่มการแสดงข้อความที่ส่งแล้วในหน้าเว็บถ้าต้องการ
       } else {
         alert('ส่งข้อมูลไม่สำเร็จ กรุณาลองใหม่');
-        console.error(data.error);
       }
     })
     .catch(error => {
       alert('เกิดข้อผิดพลาดในการส่งข้อมูล');
-      console.error('Error!', error.message);
+      console.error('Error:', error);
     });
-  });
+});
 </script>
 
 </body>
